@@ -1,6 +1,6 @@
 # CPS `requires` validation can't see GLOBAL imported targets created in another directory
 
-Draft for <https://gitlab.kitware.com/cmake/cmake/-/issues> — full reproducer: <https://github.com/smanders/cps-import-issues> (`requires-global-targets/`)
+Filed as <https://gitlab.kitware.com/cmake/cmake/-/work_items/28269> — full reproducer: <https://github.com/smanders/cps-import-issues> (`requires-global-targets/`)
 
 ## Summary
 
@@ -83,6 +83,7 @@ Reproduced on cmake 4.4.5 (latest release) and 4.5.0-rc1, -rc2, -rc3. The releva
 
 ## Related
 
+- <https://gitlab.kitware.com/cmake/cmake/-/work_items/28268> — sibling symptom of the same per-directory vs. global mismatch: the per-directory `ImportedFiles` dedup misses a prior `.cps` import and re-creating its `GLOBAL` targets collides.
 - <https://gitlab.kitware.com/cmake/cmake/-/work_items/28266> — "CPS transitive dependencies don't use dependency providers" (open): same internal `find_package` path in `FindPackageDependencies` — the provider bypass noted in the analysis above.
 - <https://gitlab.kitware.com/cmake/cmake/-/work_items/27787> — "CMake doesn't search builtin modules for CPS required components" (open): another limitation of the same nested find (`UseFindModules=false`); sibling symptom at the same fix site.
 - <https://gitlab.kitware.com/cmake/cmake/-/work_items/28113> — "CMake could warn when a CPS refers to an unknown target" (open): adjacent — this report shows the inverse, a *known* (globally visible) target wrongly reported as missing by the validation.

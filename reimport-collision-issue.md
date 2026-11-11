@@ -1,6 +1,6 @@
 # CPS: importing the same package in two directories fails for GLOBAL imported targets
 
-Draft for <https://gitlab.kitware.com/cmake/cmake/-/issues> — full reproducer: <https://github.com/smanders/cps-import-issues> (`reimport-collision/`)
+Filed as <https://gitlab.kitware.com/cmake/cmake/-/work_items/28268> — full reproducer: <https://github.com/smanders/cps-import-issues> (`reimport-collision/`)
 
 ## Summary
 
@@ -59,5 +59,6 @@ Reproduced on cmake 4.4.5 (latest release) and 4.5.0-rc1, -rc2, -rc3. The releva
 
 ## Related
 
+- <https://gitlab.kitware.com/cmake/cmake/-/work_items/28269> — sibling symptom of the same per-directory vs. global mismatch: `requires:` validation searches only the per-directory `ImportedTargets` map and can't see a `GLOBAL` target created in another directory.
 - <https://gitlab.kitware.com/cmake/cmake/-/work_items/26731> — "CPS multiple find fails" (closed): the original same-package re-find report; the `ImportedFiles` dedup that resolved it is per-directory, so the GLOBAL case here still collides.
 - <https://gitlab.kitware.com/cmake/cmake/-/work_items/27370> — "find_package(... GLOBAL) ignored for CPS" (closed): the fix that made `GLOBAL` take effect on CPS imports — the condition that makes this failure mode possible.
