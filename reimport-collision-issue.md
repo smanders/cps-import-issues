@@ -18,7 +18,8 @@ add_subdirectory(b)
 `a/CMakeLists.txt` and `b/CMakeLists.txt` (identical):
 
 ```cmake
-find_package(dupe CONFIG GLOBAL REQUIRED PATHS ${PROJECT_SOURCE_DIR}/pkgs/dupe NO_DEFAULT_PATH)
+find_package(dupe CONFIG GLOBAL REQUIRED
+  PATHS ${PROJECT_SOURCE_DIR}/pkgs/dupe NO_DEFAULT_PATH)
 ```
 
 `pkgs/dupe/share/cps/dupe.cps`:
@@ -41,7 +42,7 @@ The second `find_package` recognizes the package was already imported (or re-imp
 ## Actual behavior
 
 ```
-CMake Error at b/CMakeLists.txt:2 (find_package):
+CMake Error at b/CMakeLists.txt:1 (find_package):
   find_package cannot create target "dupe::dupe" because an imported target
   with the same name already exists.
 ```

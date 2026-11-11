@@ -37,8 +37,22 @@ Project:
 ```cmake
 cmake_minimum_required(VERSION 4.4)
 project(repro NONE)
-add_subdirectory(a)   # find_package(dep CONFIG GLOBAL ...)
-add_subdirectory(b)   # find_package(req CONFIG ...)
+add_subdirectory(a)
+add_subdirectory(b)
+```
+
+`a/CMakeLists.txt` — finds `dep` GLOBAL; the successful find also records a `dep_DIR` cache entry that the internal `requires` find reuses:
+
+```cmake
+find_package(dep CONFIG GLOBAL REQUIRED
+  PATHS ${PROJECT_SOURCE_DIR}/pkgs/dep/share/cmake NO_DEFAULT_PATH)
+```
+
+`b/CMakeLists.txt`:
+
+```cmake
+find_package(req CONFIG GLOBAL REQUIRED
+  PATHS ${PROJECT_SOURCE_DIR}/pkgs/req NO_DEFAULT_PATH)
 ```
 
 ## Expected behavior
@@ -57,7 +71,7 @@ CMake Error in pkgs/req/share/cps/req.cps:
 
 ## Analysis
 
-`cmFindPackageCommand::FindPackageDependencies` resolves `requires:` via an internal `find_package` (bypassing the dependency provider), then verifies each required component with `cmMakefile::FindImportedTarget`. That lookup searches only the current directory's `ImportedTargets` map — populated per directory and inherited from ancestors at `add_subdirectory` time. `GLOBAL` imported targets created in a *sibling* directory are registered in the global generator's index but absent from this map.
+`cmFindPackageCommand::FindPackageDependencies` resolves `requires:` via an internal `find_package` (locating `dep` through the `dep_DIR` cache entry left by `a/`'s earlier find; the dependency provider is bypassed), then verifies each required component with `cmMakefile::FindImportedTarget`. That lookup searches only the current directory's `ImportedTargets` map — populated per directory and inherited from ancestors at `add_subdirectory` time. `GLOBAL` imported targets created in a *sibling* directory are registered in the global generator's index but absent from this map.
 
 Meanwhile `if(TARGET dep::dep)` inside `dep-config.cmake` resolves the same name through `cmMakefile::FindTargetToUse`, which does consult the global index — so the script sees the target, skips re-creating it, and the validation then reports it missing. The two lookups disagree on the same name.
 
